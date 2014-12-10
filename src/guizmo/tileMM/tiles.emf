@@ -1,0 +1,139 @@
+@namespace(uri="http://www.modelum.es/guizmo/tiles", prefix="tiles")
+package tiles;
+
+import "platform:/resource/guizmo.structureMM/bin/guizmo/structureMM/structure.ecore";
+
+abstract class NamedElement {
+  attr String[1] name;
+}
+
+class LowLayoutRoot {
+  val Tile[*] viewTiles;
+}
+
+abstract class AlignedElement {
+  attr VAlignmentType[1] verticalAlignment;
+  attr HAlignmentType[1] horizontalAlignment;
+}
+
+abstract class Tile extends NamedElement, AlignedElement {
+  ref Relation[*]#source outgoing;
+  ref Relation[*]#target incoming;
+  ref Tile[*]#down up;
+  ref Tile[*]#up down;
+  ref Tile[*]#right left;
+  ref Tile[*]#left right;
+  ref structure.GraphicalElement[1] element;
+  attr int xMinPos;
+  attr int xMaxPos;
+  attr int yMinPos;
+  attr int yMaxPos;
+
+  @"http://www.modelum.es/guizmo"(comment="Represents a percentage of the horizontal space that takes up. Values are normalized between [0,1], so a 0.6 represents a 60%.")
+  attr float hSize;
+
+  @"http://www.modelum.es/guizmo"(comment="Represents a percentage of the vertical space that takes up. Values are normalized between [0,1], so a 0.6 represents a 60%.")
+  attr float vSize;
+  attr AssociationKind associationKind;
+  attr TileType tileType;
+  val Tile[*] subtiles;
+  val Relation[*] relations;
+  attr float leftMargin;
+  attr float rightMargin;
+  attr float topMargin;
+  attr float bottomMargin;
+}
+
+class SimpleTile extends Tile{
+}
+
+class OverlappingTile extends Tile {
+}
+
+class LineTile extends Tile {
+	attr OrientationType orientation;
+}
+
+/*
+class ColumnTile extends Tile {
+}
+
+abstract class ItemTile extends Tile {
+}
+
+class SingleTile extends ItemTile {
+}
+
+@"http://www.modelum.es/guizmo/tiles"(comment="'subtiles' include the main widget and its related labels. That widget is pointed by widgetTile.")
+class AssociatedWidgetTile extends ItemTile {
+}
+*/
+
+class HoleTile extends Tile {
+}
+
+class Relation {
+   attr String[1] name;
+   ref Tile[1]#outgoing source;
+   ref Tile[1]#incoming target;
+   attr AllenIntervalType[1] xInterval;
+   attr AllenIntervalType[1] yInterval;
+   attr ClosenessType[1] closeness;
+   attr boolean joined;
+}
+
+enum AssociationKind {
+  NONE = 0;
+  MAP = 1;
+  EXTRA = 2;
+}
+
+enum TileType{
+   COARSE=0;
+   FINE=1;
+   ITEM=2;
+}
+
+enum VAlignmentType {
+  NONE = 0;
+  TOP = 1;
+  MIDDLE = 2;
+  BOTTOM = 3;
+  BOTH = 4;
+}
+
+enum HAlignmentType {
+  NONE = 0;
+  LEFT = 1;
+  CENTER = 2;
+  RIGHT = 3;
+  BOTH = 4;
+}
+
+enum OrientationType {
+   HORIZONTAL = 0;
+   VERTICAL = 1;
+}
+
+enum AllenIntervalType {
+   		BEFORE = 0;
+		AFTER = 1;
+		MEETS = 2;
+		MET_BY = 3;
+		STARTS = 4;
+		STARTED_BY = 5;
+		FINISHES = 6;
+		FINISHED_BY = 7;
+		DURING = 8;
+		CONTAINS = 9;
+		OVERLAPS = 10;
+		OVERLAPPED_BY = 11;
+		EQUAL = 12;
+}
+
+enum ClosenessType {
+   VERY_CLOSE = 0;
+   CLOSE = 1;
+   FAR = 2;
+   VERY_FAR = 3;
+}

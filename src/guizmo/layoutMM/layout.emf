@@ -1,0 +1,137 @@
+@namespace(uri="http://www.modelum.es/guizmo/layout", prefix="lyt")
+package layout;
+
+import "platform:/resource/guizmo.structureMM/bin/guizmo/structureMM/structure.ecore";
+
+class LayoutRoot {
+   val LayoutInfoTreeNode[*] viewTrees;
+}
+
+abstract class NamedElement{
+   attr String name;
+}
+
+class LayoutInfoTreeNode extends NamedElement{
+   ref structure.GraphicalElement[1] guiElement;
+   val Layout[*] layoutAlternatives;
+   val LayoutInfoTreeNode[*]#parentNode childrenNodes;
+   ref LayoutInfoTreeNode#childrenNodes parentNode;
+   ref Layout[*]#refNode referredBy;
+}
+
+abstract class Layout extends NamedElement{
+   val Layout[+]#parentLayout sublayouts;
+   ref Layout#sublayouts parentLayout;
+   ref LayoutInfoTreeNode#referredBy refNode;
+   attr HAlignmentType absHAlignment;
+   attr VAlignmentType absVAlignment;
+   attr HAlignmentType contentHAlignment;
+   attr VAlignmentType contentVAlignment;
+   attr HAlignmentType parentHAlignment;
+   attr VAlignmentType parentVAlignment;
+   attr float hSize;
+   attr float vSize;
+   attr float fitness;
+   val Gap[*] gaps;
+   ref Gap[*]#layouts refGaps;
+   val Margin[*] margins;
+   ref AlignmentMark#lnodes lborder;
+   ref AlignmentMark#rnodes rborder;
+   //ref NodeLine#nodes containerLine;
+}
+
+class FlowLayout extends Layout{
+   attr FlowLayoutType[1] type;
+}
+
+class BorderLayout extends Layout{
+   ref Layout[1] top;
+   ref Layout[1] left;
+   ref Layout[1] center;
+   ref Layout[1] right;
+   ref Layout[1] bottom;
+}
+
+class GridLayout extends Layout{
+	attr int[1] numCols;
+}
+
+class FormLayout extends Layout{
+   val AlignmentMark[*] marks;
+   //val NodeLine[*]#parent lines;
+   val AlignedColumn[*] columns;
+   attr int numNodesLongestLine;
+}
+
+class AlignedColumn{
+   attr float lgap;
+   attr float rgap;
+   ref ElementNode[*] nodes;
+   ref ElementNode[*] leftNodes;
+   ref ElementNode[*] rightNodes;
+}
+
+//class NodeLine extends NamedElement{
+//   ref Layout[*]#containerLine nodes;
+//   ref FormLayout[1]#lines parent;
+//}
+
+class AlignmentMark{
+   attr float[1] lgap;
+   ref Layout[*]#lborder lnodes;
+   ref Layout[*]#rborder rnodes;
+}
+
+class CustomLayout extends Layout{
+   
+}
+
+class ElementNode extends Layout{
+   
+}
+
+abstract class Separation{
+   attr float value;
+}
+
+class Gap extends Separation{
+   attr GapType type;
+   ref Layout[2]#refGaps layouts;
+}
+
+class Margin extends Separation{
+   attr MarginType type;
+}
+
+enum FlowLayoutType{
+   HORIZONTAL=0;
+   VERTICAL=1;
+}
+
+enum GapType{
+   HORIZONTAL=0;
+   VERTICAL=1;
+}
+
+enum MarginType{
+   LEFT=0;
+   RIGHT=1;
+   TOP=2;
+   BOTTOM=3;
+}
+
+enum HAlignmentType{
+   NONE=0;
+   LEFT=1;
+   CENTER=2;
+   RIGHT=3;
+   BOTH=4;
+}
+
+enum VAlignmentType{
+   NONE=0;
+   TOP=1;
+   MIDDLE=2;
+   BOTTOM=3;
+   BOTH=4;
+}

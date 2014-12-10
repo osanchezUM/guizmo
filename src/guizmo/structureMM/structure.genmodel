@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/guizmo.structureMM/src" modelPluginID="guizmo.structureMM"
+    modelName="Structure" importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0"
+    copyrightFields="false">
+  <foreignModel>structure.ecore</foreignModel>
+  <genPackages prefix="Structure" basePackage="guizmo" disposableProviderFactory="true"
+      ecorePackage="structure.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="structure.ecore#//LanguageType">
+      <genEnumLiterals ecoreEnumLiteral="structure.ecore#//LanguageType/EN"/>
+      <genEnumLiterals ecoreEnumLiteral="structure.ecore#//LanguageType/ES"/>
+      <genEnumLiterals ecoreEnumLiteral="structure.ecore#//LanguageType/FR"/>
+    </genEnums>
+    <genClasses ecoreClass="structure.ecore#//StructureRoot">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//StructureRoot/views"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//StructureRoot/resourceRepository"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//ResourceRepository">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//ResourceRepository/resources"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="structure.ecore#//Resource">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//Resource/name"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//ImageResource"/>
+    <genClasses ecoreClass="structure.ecore#//I18NResource">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//I18NResource/language"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//I18NResource/translations"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//TextTranslation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//TextTranslation/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//TextTranslation/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="structure.ecore#//GraphicalElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalElement/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalElement/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalElement/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalElement/briefDescription"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalElement/isVisible"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalElement/isEnabled"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalElement/isResizable"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="structure.ecore#//Locatable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//Locatable/xmin"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//Locatable/ymin"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//Locatable/xmax"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//Locatable/ymax"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//GraphicalView">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//GraphicalView/title"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//GraphicalView/widgets"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="structure.ecore#//Widget"/>
+    <genClasses image="false" ecoreClass="structure.ecore#//Menu"/>
+    <genClasses image="false" ecoreClass="structure.ecore#//Toolbar"/>
+    <genClasses image="false" ecoreClass="structure.ecore#//ComposableWidget"/>
+    <genClasses ecoreClass="structure.ecore#//GUIRegion">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//GUIRegion/widgets"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="structure.ecore#//SingleWidget"/>
+    <genClasses image="false" ecoreClass="structure.ecore#//GraphicalResource">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalResource/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//GraphicalResource/value"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference structure.ecore#//GraphicalResource/resource"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//Text"/>
+    <genClasses ecoreClass="structure.ecore#//Image"/>
+    <genClasses image="false" ecoreClass="structure.ecore#//Linkable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//Linkable/isHyperlink"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//Linkable/uri"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//OutputText">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//OutputText/text"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//TextBox">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//TextBox/text"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//ComboBox"/>
+    <genClasses ecoreClass="structure.ecore#//CheckBox"/>
+    <genClasses ecoreClass="structure.ecore#//RadioGroup">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//RadioGroup/checkboxes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//RadioGroup/multipleSelection"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//RadioButton"/>
+    <genClasses ecoreClass="structure.ecore#//ListBox">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//ListBox/checkboxes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute structure.ecore#//ListBox/multipleSelection"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//ListItem"/>
+    <genClasses ecoreClass="structure.ecore#//ImageContainer">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//ImageContainer/image"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//VideoContainer"/>
+    <genClasses ecoreClass="structure.ecore#//Button">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference structure.ecore#//Button/graphic"/>
+    </genClasses>
+    <genClasses ecoreClass="structure.ecore#//ObjectWidget"/>
+  </genPackages>
+</genmodel:GenModel>

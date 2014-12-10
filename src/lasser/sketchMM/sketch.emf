@@ -1,0 +1,174 @@
+@namespace(uri="http://www.modelum.es/layoutGuesser/sketch", prefix="sketch")
+package sketch;
+
+class SketchRoot {
+  val Window[*] windows;
+}
+
+abstract class IdentifiedElement {
+  attr String[1] ~id;
+}
+
+abstract class NamedElement {
+   attr String name;
+}
+
+abstract class TextElement {
+  attr String text;
+}
+
+  abstract class Positionable {
+    attr int[1] xPos = 0;
+    attr int[1] yPos = 0;
+    attr int[1] width = 0;
+    attr int[1] height = 0;
+  }
+
+  abstract class Widget extends Positionable, IdentifiedElement {
+  }
+
+  abstract class Container extends Widget{
+  	val Widget[*] widgets;
+  }
+
+  class CompositeWidget extends Widget {
+    val Widget[*] components;
+  }
+
+  class Window extends Container, NamedElement {
+  }
+
+  class ToolBar extends Widget {
+  }
+
+  class Menu extends Widget {
+    /*val Image icon;*/
+    /*val Text text;*/
+  }
+
+  class MenuItem extends Widget {
+    /*val Image icon;*/
+    /*val Text text;*/
+  }
+
+  enum AlignmentType {
+    NONE = 0;
+    TOP = 1;
+    BOTTOM = 2;
+    LEFT = 3;
+    RIGHT = 4;
+    REST = 5;
+  }
+
+  abstract class Panel extends Container {
+    //attr AlignmentType alignment;
+  }
+
+  class PlainPanel extends Panel{
+  }
+
+  class TabbedPanel extends Panel {
+  }
+  
+  class WidgetGroup extends Container, TextElement{
+     
+  }
+  
+  abstract class TextWidget extends Widget, TextElement{
+     
+  }
+
+  class TextBox extends TextWidget{
+    //val Text text;
+    //attr boolean isMultiline;
+    //attr int stringMax;
+    //attr boolean editable;
+  }
+  
+  class TextArea extends TextWidget{
+     attr int rows;
+     attr int columns;
+  }
+
+  class Label extends TextWidget{
+    //val Text[1] text;
+  }
+
+  class Image extends TextWidget{
+  }
+
+  class Button extends TextWidget{
+    //val GrahicalResource resource;
+  }
+
+  class ListBox extends Widget{
+    //val GrahicalResource[*] options;
+  }
+
+  class ComboBox extends TextWidget{
+    //val GrahicalResource[*] options;
+  }
+
+  class RadioButton extends TextWidget{
+    //ref RadioGroup#buttons group;
+    //val GrahicalResource[1] resource;
+    //attr String value;
+    attr boolean selected;
+  }
+  
+  class CheckBox extends TextWidget{
+  	attr boolean selected;
+  }
+  
+  class RadioGroup extends Widget{
+    //val RadioButton[*]#group buttons;
+    ref RadioButton selected;
+    val RadioButton[*] items;
+  }
+  
+  class CheckGroup extends Widget{
+  	val CheckBox[*] items;
+  }
+  
+  class Table extends Widget{
+     val Row[*] rows;
+  }
+  
+  class Row{
+     attr String[*] values;
+  }
+
+  class Font{
+    attr FontType type;
+    attr int[1] size = 12;
+  }
+
+  enum FontType {
+    DEFAULT = 0;
+    TIMES_NEW_ROMAN = 1;
+    ARIAL = 2;
+    COURIER_NEW = 3;
+  }
+
+  enum ColourType {
+    BLACK = 0;
+    WHITE = 1;
+    GRAY = 2;
+  }
+
+  class ScrollBar extends Widget {
+  }
+
+  class Border {
+    attr BorderType[1] type;
+  }
+
+  class TreeViewer extends Widget{
+  }
+
+  enum BorderType {
+    DEFAULT = 0;
+  }
+
+
+

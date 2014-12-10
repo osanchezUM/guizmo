@@ -1,0 +1,175 @@
+@namespace(uri="http://www.modelum.es/guizmo/structure", prefix="struc")
+package structure;
+
+class StructureRoot {
+	val GraphicalView[*] views;
+	val ResourceRepository resourceRepository;
+}
+
+class ResourceRepository{
+   val Resource[*] resources;
+}
+
+abstract class Resource{
+   attr String[1] name;
+}
+
+class ImageResource extends Resource, Locatable{ //Dimensionable
+
+}
+
+class I18NResource extends Resource{
+   attr LanguageType[1] language;
+   val TextTranslation[*] translations;
+}
+
+class TextTranslation{
+   attr String name;
+   attr String value;
+}
+
+enum LanguageType{
+   EN = 0;
+   ES = 1;
+   FR = 2;
+}
+
+abstract class GraphicalElement{
+	attr String[1] ~id;
+	attr String name;
+	attr String description;
+	attr String briefDescription;
+	attr boolean isVisible;
+	attr boolean isEnabled;
+	attr boolean isResizable;
+}
+
+/*
+abstract class Dimensionable {
+	attr int width;
+	attr int height;
+}
+*/
+
+abstract class Locatable {
+    attr int xmin;
+	attr int ymin;
+	attr int xmax;
+	attr int ymax;
+}
+
+abstract class Container extends GraphicalElement, Locatable{
+   val ComposableWidget[*] widgets;
+}
+
+class GraphicalView extends Container{
+	val Text title;
+}
+
+abstract class Widget extends GraphicalElement{
+   
+}
+
+abstract class Menu extends Widget{
+   
+}
+
+abstract class Toolbar extends Widget{
+   
+}
+
+abstract class ComposableWidget extends Widget, Locatable{
+
+}
+
+class GUIRegion extends Container, ComposableWidget{
+	attr boolean border;
+	attr String title;
+}
+
+abstract class SingleWidget extends ComposableWidget{
+}
+
+abstract class GraphicalResource{
+   attr String key;
+   attr String value;
+   ref Resource resource;
+}
+
+class Text extends GraphicalResource{
+   
+}
+
+class Image extends GraphicalResource{
+   
+}
+
+abstract class Linkable{
+   attr boolean isHyperlink;
+   attr String uri;
+}
+
+class OutputText extends SingleWidget, Linkable{
+   val Text[1] text;
+}
+
+class TextBox extends SingleWidget{
+   val Text text;
+}
+
+class TextArea extends SingleWidget{
+   val Text text;
+   attr int numRows;
+}
+
+abstract class Itemizable{
+   val Item[*] items;
+}
+
+class Item extends GraphicalElement{
+   val GraphicalResource resource;
+}
+
+class ComboBox extends SingleWidget, Itemizable{
+}
+
+class CheckBox extends SingleWidget{
+   val GraphicalResource resource;
+   attr boolean selected;
+}
+
+class RadioGroup extends SingleWidget, Itemizable{
+   attr boolean multipleSelection;
+   ref Item[*] selected;
+}
+
+class ListBox extends SingleWidget, Itemizable{
+   attr boolean multipleSelection;
+}
+
+class ImageContainer extends SingleWidget, Linkable{
+   val Image[1] image;
+}
+
+class VideoContainer extends SingleWidget{
+   
+}
+
+class Button extends SingleWidget{
+   val GraphicalResource graphic;
+}
+
+class ObjectWidget extends SingleWidget{
+   
+}
+
+class Table extends SingleWidget{
+   val GraphicalResource[*] headers;
+   val SingleWidget[*] types;
+   val TableRow[*] rows;
+}
+
+class TableRow{
+   val GraphicalResource[*] values;
+}
+

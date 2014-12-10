@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sketch" nsURI="http://www.modelum.es/layoutGuesser/sketch" nsPrefix="sketch">
+  <eClassifiers xsi:type="ecore:EClass" name="SketchRoot">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="windows" upperBound="-1"
+        eType="#//Window" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IdentifiedElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NamedElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TextElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Positionable" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="xPos" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="yPos" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="0"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt" defaultValueLiteral="0"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Widget" abstract="true" eSuperTypes="#//Positionable #//IdentifiedElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Container" abstract="true" eSuperTypes="#//Widget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="widgets" upperBound="-1"
+        eType="#//Widget" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CompositeWidget" eSuperTypes="#//Widget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
+        eType="#//Widget" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Window" eSuperTypes="#//Container #//NamedElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ToolBar" eSuperTypes="#//Widget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Menu" eSuperTypes="#//Widget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//Widget"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="AlignmentType">
+    <eLiterals name="NONE"/>
+    <eLiterals name="TOP" value="1"/>
+    <eLiterals name="BOTTOM" value="2"/>
+    <eLiterals name="LEFT" value="3"/>
+    <eLiterals name="RIGHT" value="4"/>
+    <eLiterals name="REST" value="5"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Panel" abstract="true" eSuperTypes="#//Container"/>
+  <eClassifiers xsi:type="ecore:EClass" name="PlainPanel" eSuperTypes="#//Panel"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TabbedPanel" eSuperTypes="#//Panel"/>
+  <eClassifiers xsi:type="ecore:EClass" name="WidgetGroup" eSuperTypes="#//Container #//TextElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TextWidget" abstract="true" eSuperTypes="#//Widget #//TextElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TextBox" eSuperTypes="#//TextWidget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TextArea" eSuperTypes="#//TextWidget">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rows" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="columns" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Label" eSuperTypes="#//TextWidget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Image" eSuperTypes="#//TextWidget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Button" eSuperTypes="#//TextWidget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ListBox" eSuperTypes="#//Widget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ComboBox" eSuperTypes="#//TextWidget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="RadioButton" eSuperTypes="#//TextWidget">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="selected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CheckBox" eSuperTypes="#//TextWidget">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="selected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RadioGroup" eSuperTypes="#//Widget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="selected" eType="#//RadioButton"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1"
+        eType="#//RadioButton" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CheckGroup" eSuperTypes="#//Widget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1"
+        eType="#//CheckBox" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Table" eSuperTypes="#//Widget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rows" upperBound="-1" eType="#//Row"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Row">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Font">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//FontType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="12"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="FontType">
+    <eLiterals name="DEFAULT"/>
+    <eLiterals name="TIMES_NEW_ROMAN" value="1"/>
+    <eLiterals name="ARIAL" value="2"/>
+    <eLiterals name="COURIER_NEW" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ColourType">
+    <eLiterals name="BLACK"/>
+    <eLiterals name="WHITE" value="1"/>
+    <eLiterals name="GRAY" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ScrollBar" eSuperTypes="#//Widget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Border">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//BorderType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TreeViewer" eSuperTypes="#//Widget"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="BorderType">
+    <eLiterals name="DEFAULT"/>
+  </eClassifiers>
+</ecore:EPackage>

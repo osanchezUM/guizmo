@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/guizmo.tileMM/src" modelPluginID="guizmo.tileMM"
+    modelName="Tiles" importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0"
+    copyrightFields="false" usedGenPackages="../../../../guizmo.structureMM/src/guizmo/structureMM/structure.genmodel#//structure">
+  <foreignModel>tiles.ecore</foreignModel>
+  <genPackages prefix="Tiles" basePackage="guizmo" disposableProviderFactory="true"
+      ecorePackage="tiles.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="tiles.ecore#//AssociationKind">
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AssociationKind/NONE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AssociationKind/MAP"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AssociationKind/EXTRA"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="tiles.ecore#//TileType">
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//TileType/COARSE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//TileType/FINE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//TileType/ITEM"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="tiles.ecore#//VAlignmentType">
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//VAlignmentType/NONE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//VAlignmentType/TOP"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//VAlignmentType/MIDDLE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//VAlignmentType/BOTTOM"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="tiles.ecore#//HAlignmentType">
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//HAlignmentType/NONE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//HAlignmentType/LEFT"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//HAlignmentType/CENTER"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//HAlignmentType/RIGHT"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="tiles.ecore#//OrientationType">
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//OrientationType/HORIZONTAL"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//OrientationType/VERTICAL"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="tiles.ecore#//AllenIntervalType">
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/BEFORE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/AFTER"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/MEETS"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/MET_BY"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/STARTS"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/STARTED_BY"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/FINISHES"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/FINISHED_BY"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/DURING"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/CONTAINS"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/OVERLAPS"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/OVERLAPPED_BY"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//AllenIntervalType/EQUAL"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="tiles.ecore#//ClosenessType">
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//ClosenessType/VERY_CLOSE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//ClosenessType/CLOSE"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//ClosenessType/FAR"/>
+      <genEnumLiterals ecoreEnumLiteral="tiles.ecore#//ClosenessType/VERY_FAR"/>
+    </genEnums>
+    <genClasses image="false" ecoreClass="tiles.ecore#//NamedElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//NamedElement/name"/>
+    </genClasses>
+    <genClasses ecoreClass="tiles.ecore#//LowLayoutRoot">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference tiles.ecore#//LowLayoutRoot/viewTiles"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="tiles.ecore#//AlignedElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//AlignedElement/verticalAlignment"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//AlignedElement/horizontalAlignment"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="tiles.ecore#//Tile">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/outgoing"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/incoming"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/up"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/down"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/left"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/right"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/element"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Tile/xMinPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Tile/xMaxPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Tile/yMinPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Tile/yMaxPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Tile/hSize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Tile/vSize"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Tile/associationKind"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Tile/tileType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/subtiles"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference tiles.ecore#//Tile/relations"/>
+    </genClasses>
+    <genClasses ecoreClass="tiles.ecore#//SimpleTile"/>
+    <genClasses ecoreClass="tiles.ecore#//OverlappingTile"/>
+    <genClasses ecoreClass="tiles.ecore#//LineTile">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//LineTile/orientation"/>
+    </genClasses>
+    <genClasses ecoreClass="tiles.ecore#//HoleTile"/>
+    <genClasses ecoreClass="tiles.ecore#//Relation">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Relation/name"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Relation/source"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference tiles.ecore#//Relation/target"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Relation/xInterval"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Relation/yInterval"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Relation/closeness"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute tiles.ecore#//Relation/joined"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

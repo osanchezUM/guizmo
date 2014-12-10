@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/lasser.sketchMM/src" modelPluginID="lasser.sketchMM"
+    modelName="Sketch" importerID="org.eclipse.emf.importer.ecore" complianceLevel="6.0"
+    copyrightFields="false">
+  <foreignModel>sketch.ecore</foreignModel>
+  <genPackages prefix="Sketch" basePackage="lasser" disposableProviderFactory="true"
+      ecorePackage="sketch.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="sketch.ecore#//AlignmentType">
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//AlignmentType/NONE"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//AlignmentType/TOP"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//AlignmentType/BOTTOM"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//AlignmentType/LEFT"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//AlignmentType/RIGHT"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//AlignmentType/REST"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="sketch.ecore#//FontType">
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//FontType/DEFAULT"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//FontType/TIMES_NEW_ROMAN"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//FontType/ARIAL"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//FontType/COURIER_NEW"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="sketch.ecore#//ColourType">
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//ColourType/BLACK"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//ColourType/WHITE"/>
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//ColourType/GRAY"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="sketch.ecore#//BorderType">
+      <genEnumLiterals ecoreEnumLiteral="sketch.ecore#//BorderType/DEFAULT"/>
+    </genEnums>
+    <genClasses ecoreClass="sketch.ecore#//SketchRoot">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sketch.ecore#//SketchRoot/windows"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sketch.ecore#//IdentifiedElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//IdentifiedElement/id"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sketch.ecore#//NamedElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//NamedElement/name"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sketch.ecore#//TextElement">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//TextElement/text"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sketch.ecore#//Positionable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//Positionable/xPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//Positionable/yPos"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//Positionable/width"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//Positionable/height"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sketch.ecore#//Widget"/>
+    <genClasses image="false" ecoreClass="sketch.ecore#//Container">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sketch.ecore#//Container/widgets"/>
+    </genClasses>
+    <genClasses ecoreClass="sketch.ecore#//CompositeWidget">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sketch.ecore#//CompositeWidget/components"/>
+    </genClasses>
+    <genClasses ecoreClass="sketch.ecore#//Window"/>
+    <genClasses ecoreClass="sketch.ecore#//ToolBar"/>
+    <genClasses ecoreClass="sketch.ecore#//Menu"/>
+    <genClasses ecoreClass="sketch.ecore#//MenuItem"/>
+    <genClasses image="false" ecoreClass="sketch.ecore#//Panel">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//Panel/alignment"/>
+    </genClasses>
+    <genClasses ecoreClass="sketch.ecore#//PlainPanel"/>
+    <genClasses ecoreClass="sketch.ecore#//TabbedPanel"/>
+    <genClasses ecoreClass="sketch.ecore#//WidgetGroup"/>
+    <genClasses ecoreClass="sketch.ecore#//TextBox"/>
+    <genClasses ecoreClass="sketch.ecore#//Label"/>
+    <genClasses ecoreClass="sketch.ecore#//Image"/>
+    <genClasses ecoreClass="sketch.ecore#//CheckBox"/>
+    <genClasses ecoreClass="sketch.ecore#//Button"/>
+    <genClasses ecoreClass="sketch.ecore#//ListBox"/>
+    <genClasses ecoreClass="sketch.ecore#//ComboBox"/>
+    <genClasses ecoreClass="sketch.ecore#//RadioGroup"/>
+    <genClasses ecoreClass="sketch.ecore#//RadioButton"/>
+    <genClasses ecoreClass="sketch.ecore#//Font">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//Font/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//Font/size"/>
+    </genClasses>
+    <genClasses ecoreClass="sketch.ecore#//ScrollBar"/>
+    <genClasses ecoreClass="sketch.ecore#//Border">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sketch.ecore#//Border/type"/>
+    </genClasses>
+    <genClasses ecoreClass="sketch.ecore#//TreeViewer"/>
+  </genPackages>
+</genmodel:GenModel>

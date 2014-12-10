@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="layout" nsURI="http://www.modelum.es/guizmo/layout" nsPrefix="lyt">
+  <eClassifiers xsi:type="ecore:EClass" name="LayoutRoot">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="viewTrees" upperBound="-1"
+        eType="#//LayoutInfoTreeNode" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NamedElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LayoutInfoTreeNode" eSuperTypes="#//NamedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guiElement" lowerBound="1"
+        eType="ecore:EClass ../../../../guizmo.structureMM/bin/guizmo/structureMM/structure.ecore#//GraphicalElement"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="layoutAlternatives" upperBound="-1"
+        eType="#//Layout" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="childrenNodes" upperBound="-1"
+        eType="#//LayoutInfoTreeNode" containment="true" eOpposite="#//LayoutInfoTreeNode/parentNode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parentNode" eType="#//LayoutInfoTreeNode"
+        eOpposite="#//LayoutInfoTreeNode/childrenNodes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referredBy" upperBound="-1"
+        eType="#//Layout" eOpposite="#//Layout/refNode"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Layout" abstract="true" eSuperTypes="#//NamedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sublayouts" lowerBound="1"
+        upperBound="-1" eType="#//Layout" containment="true" eOpposite="#//Layout/parentLayout"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parentLayout" eType="#//Layout"
+        eOpposite="#//Layout/sublayouts"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refNode" eType="#//LayoutInfoTreeNode"
+        eOpposite="#//LayoutInfoTreeNode/referredBy"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="absHAlignment" eType="#//HAlignmentType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="absVAlignment" eType="#//VAlignmentType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="contentHAlignment" eType="#//HAlignmentType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="contentVAlignment" eType="#//VAlignmentType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentHAlignment" eType="#//HAlignmentType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentVAlignment" eType="#//VAlignmentType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="vSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fitness" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="gaps" upperBound="-1" eType="#//Gap"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="refGaps" upperBound="-1"
+        eType="#//Gap" eOpposite="#//Gap/layouts"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="margins" upperBound="-1"
+        eType="#//Margin" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lborder" eType="#//AlignmentMark"
+        eOpposite="#//AlignmentMark/lnodes"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rborder" eType="#//AlignmentMark"
+        eOpposite="#//AlignmentMark/rnodes"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FlowLayout" eSuperTypes="#//Layout">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//FlowLayoutType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BorderLayout" eSuperTypes="#//Layout">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="top" lowerBound="1" eType="#//Layout"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left" lowerBound="1" eType="#//Layout"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="center" lowerBound="1"
+        eType="#//Layout"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right" lowerBound="1" eType="#//Layout"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bottom" lowerBound="1"
+        eType="#//Layout"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GridLayout" eSuperTypes="#//Layout">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="numCols" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FormLayout" eSuperTypes="#//Layout">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="marks" upperBound="-1"
+        eType="#//AlignmentMark" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="columns" upperBound="-1"
+        eType="#//AlignedColumn" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="numNodesLongestLine" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlignedColumn">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lgap" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rgap" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="nodes" upperBound="-1"
+        eType="#//ElementNode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="leftNodes" upperBound="-1"
+        eType="#//ElementNode"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rightNodes" upperBound="-1"
+        eType="#//ElementNode"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlignmentMark">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lgap" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="lnodes" upperBound="-1"
+        eType="#//Layout" eOpposite="#//Layout/lborder"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rnodes" upperBound="-1"
+        eType="#//Layout" eOpposite="#//Layout/rborder"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CustomLayout" eSuperTypes="#//Layout"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ElementNode" eSuperTypes="#//Layout"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Separation" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Gap" eSuperTypes="#//Separation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//GapType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="layouts" lowerBound="2"
+        upperBound="2" eType="#//Layout" eOpposite="#//Layout/refGaps"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Margin" eSuperTypes="#//Separation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//MarginType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="FlowLayoutType">
+    <eLiterals name="HORIZONTAL"/>
+    <eLiterals name="VERTICAL" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="GapType">
+    <eLiterals name="HORIZONTAL"/>
+    <eLiterals name="VERTICAL" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="MarginType">
+    <eLiterals name="LEFT"/>
+    <eLiterals name="RIGHT" value="1"/>
+    <eLiterals name="TOP" value="2"/>
+    <eLiterals name="BOTTOM" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="HAlignmentType">
+    <eLiterals name="NONE"/>
+    <eLiterals name="LEFT" value="1"/>
+    <eLiterals name="CENTER" value="2"/>
+    <eLiterals name="RIGHT" value="3"/>
+    <eLiterals name="BOTH" value="4"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="VAlignmentType">
+    <eLiterals name="NONE"/>
+    <eLiterals name="TOP" value="1"/>
+    <eLiterals name="MIDDLE" value="2"/>
+    <eLiterals name="BOTTOM" value="3"/>
+    <eLiterals name="BOTH" value="4"/>
+  </eClassifiers>
+</ecore:EPackage>

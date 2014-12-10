@@ -1,0 +1,818 @@
+package guizmo.tiles2layout.impl;
+
+import java.awt.Rectangle;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.System.out;
+
+import guizmo.layout.*;
+import guizmo.tiles.ClosenessType;
+import guizmo.tiles.LowLayoutRoot;
+import guizmo.tiles.Tile;
+import guizmo.tiles.TilesFactory;
+import guizmo.tiles.utilM.*;
+import guizmo.tiles2layout.graphs.*;
+import guizmo.tiles2layout.patterns.*;
+import guizmo.structure.ComposableWidget;
+import guizmo.structure.GraphicalElement;
+import guizmo.structure.StructureRoot;
+
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
+
+public class LayoutAnalyzer {
+
+	private static TilesFactory lllfactory = TilesFactory.eINSTANCE;
+	private static LayoutFactory factory = LayoutFactory.eINSTANCE;
+	private static LayoutRoot layoutRoot;
+	private static LayoutType layoutTypes[] = {
+		LayoutType.HORIZONTAL_FLOW, LayoutType.VERTICAL_FLOW, LayoutType.BORDER, LayoutType.GRID
+	};
+	private static final String INFIX = "_";
+	private static final String INFO_SUFFIX = "_info";
+	private static final String LAYOUT_SUFFIX = "_lyt";
+	private static final int NUM_CLOSENESS_LEVELS = 4;
+	private static final ClosenessType MIN_CLOSENESS_LEVEL = ClosenessType.VERY_CLOSE;
+	private static float hAlignmentMargin = 0.15f;
+	private static float vAlignmentMargin = 0.15f;
+	private static Map<Tile, List<Layout>> mappings;
+	private static boolean debug = false;
+	private static FileWriter writer = null;
+	private static PrintWriter pwriter = null;
+	private static int debugPoint = 0;
+	
+	/**
+	 * Predefined layout types which can be used for the layout model
+	 */
+	public enum LayoutType{
+		HORIZONTAL_FLOW,
+		VERTICAL_FLOW,
+		BORDER,
+		GRID
+	}
+	
+	/*
+	 * Allows changing the layout
+	 * Pre: the layout types are not repeated
+	 */
+	public static void setLayoutTypes(LayoutType types[]){
+		if (types.length < 1)
+			throw new RuntimeException("Wrong argument");
+		layoutTypes = types;
+	}
+	
+	public static void setAlignmentMargins(float hMargin, float vMargin){
+		if (hMargin >= 0 && hMargin < 1)
+			hAlignmentMargin = hMargin;
+		if (vMargin >= 0 && vMargin < 1)
+			vAlignmentMargin = vMargin;
+	}
+	
+	public static LayoutRoot inferLayout(StructureRoot structureRootElem, LowLayoutRoot graphRootElem) {
+		
+		// Create the root of the layout model
+		layoutRoot = factory.createLayoutRoot();
+		// Initialize the mappings
+		mappings = new HashMap<Tile, List<Layout>>();
+
+		// Traverse the low layout model
+		for (Tile vtile: graphRootElem.getViewTiles()){
+			LayoutInfoTreeNode vnode = factory.createLayoutInfoTreeNode();
+			vnode.setName(vtile.getName() + INFO_SUFFIX);
+			layoutRoot.getViewTrees().add(vnode);
+			vnode.setGuiElement(vtile.getElement());
+			traverseLLModel(vnode, vtile);
+		}
+		
+		// Return the model
+		return layoutRoot;
+	}
+	
+	/*
+	 *  Traverses the low layout model recursively
+	 */
+	private static void traverseLLModel(LayoutInfoTreeNode parentNode, Tile tile){
+		
+//		// DEBUG
+//		if (tile.getName().equals("Root")){
+//			out.print("");
+//		}
+		
+		if (!tile.getSubtiles().isEmpty()){
+			if (tile.getSubtiles().size() > 1){
+				List<Layout> list = inferLayout(tile);
+				parentNode.getLayoutAlternatives().addAll(list);
+				if (parentNode.getReferredBy().isEmpty()){
+					for (Layout l: list){
+						parentNode.getReferredBy().add(l);
+					}
+				}
+			}
+			for (Tile t: tile.getSubtiles()){
+				LayoutInfoTreeNode n = factory.createLayoutInfoTreeNode();
+				n.setName(t.getName() + INFO_SUFFIX);
+				parentNode.getChildrenNodes().add(n);
+				n.setGuiElement(t.getElement());
+				
+				//
+				if (tile.getSubtiles().size() > 1){
+					List<Layout> layoutList = getMapping(t);
+					for (Layout l: layoutList){
+						n.getReferredBy().add(l);
+					}
+				}
+				
+				if (!t.getSubtiles().isEmpty())
+					traverseLLModel(n, t);
+				//
+//				if (t.getSubtiles().isEmpty()){
+//					List<Layout> elementNodeList = getMapping(t);
+//					for (Layout enode: elementNodeList){
+//						enode.setRefNode(n);
+//					}
+//				}else{
+//					traverseLLModel(n, t);
+//				}
+			}
+		}
+	}
+	
+	
+	/*
+	 * LAYOUT INFERENCE ALGORITHM
+	 * 
+	 *	-- G = (V,E) is the problem graph --
+	 *	-- L is a set of fixed layouts: HorizontalFlow, VerticalFlow, Grid, Border --
+	 *	S <- {} -- solution set (list of possible layouts) --
+	 *  while (morePermutations(L))
+	 *	   p <- generatePermutation(L) -- permutations? variations? with repetition? --
+	 *	   G1 <- copy(G) -- The solution will be stored in G1 --
+	 *	   while (remainingNodes(G1)) > 1
+	 *	      l <- getLayoutPattern(p)
+	 *	      matches <- matchLayout(l, G1)
+	 *	      foreach match
+	 *	         joinNodes(match, G1)	
+	 *	   if not S.contains(G1)
+	 *	      f = fitness(G1)
+	 *	      S <- (G,f)
+	 *
+	 *
+	 * ---------------------------------------------------------------------------------
+	 * 
+	 * procedure inferLayout(tile, layoutSet): solutions
+	 *	solutions <- {}
+	 *	solutionSequences <- {}
+	 *	while morePermutations(layoutSet)
+	 *		permutation <- nextPermutation(layoutSet)
+	 *		currentSolSeq <- {}
+	 *		closenessLimit <- MIN_CLOSENESS_LEVEL
+	 *		graph <- copyGraph(tile)
+	 *		remainingNodes <- graphOrder(current)
+	 *		loopsWithoutChanges <- 0
+	 *		while remainingNodes > 1 and loopsWithoutChanges < NUM_LAYOUTS * NUM_CLOSENESS_LEVELS
+	 *			pattern <- getNextLayoutPattern(permutation)
+	 *			discarded <- {}
+	 *			matches <- match(graph, closenessLimit)
+	 *			if notEmpty(matches)
+	 *				add(currentSolSeq , pattern)
+	 *				for each match in matches
+	 *					mergeNodes(graph, match, pattern)
+	 *				loopsWithoutChanges <- 0
+	 *			closenessLimit <- MIN_CLOSENESS_LEVEL
+	 *			else
+	 *				loopsWithoutChanges <- loopsWithoutChanges + 1
+	 *				if loopsWithoutChanges > 0 
+	 *	            		and loopsWithoutChanges < layoutTypes.length * NUM_CLOSENESS_LEVELS 
+	 *	                 	and loopsWithoutChanges % NUM_CLOSENESS_LEVELS = 0
+	 *					closenessLimit <- nextClosenessLevel(closenessLimit)
+	 *				remainingNodes <- graphOrder(graph)
+	 *		if (remainingNodes > 1)
+	 *			return("*** No solution ***")
+	 *		else
+	 *			if notContains(solutionSequences, currentSolSeq)
+	 *				add(solutionSequences , currentSolSeq)
+	 *				layout <- createLayout(graph)
+	 *				layout.fitness <- fitness(layout)
+	 *				add(solutions, layout)
+	 *				// If the solution consists of a unique layout
+	 *				// Then there is no other better solution so we stop trying all the layout variations
+	 *				if size(currentSolSeq) = 1
+	 *					break loop
+	 *			else
+	 *				return("Solution contained in a previous solution")
+	 *
+	 */
+	private static List<Layout> inferLayout(Tile tile){
+		List<Layout> solutions = new ArrayList<Layout>();
+		List<List<LayoutType>> solutionSequences = new ArrayList<List<LayoutType>>();
+		VariationGenerator variationGen = new VariationGenerator(layoutTypes);
+		int remainingNodes;
+		while (variationGen.hasMore()){
+			LayoutType variation[] = variationGen.next();
+			debug("\n"+"Variation: ", variation);
+			List<LayoutType> currentSolSeq = new ArrayList<LayoutType>();
+			LayoutSequenceGenerator seqGen = new LayoutSequenceGenerator(variation);
+			ClosenessType closenessLimit = MIN_CLOSENESS_LEVEL;
+			LNode current = LGraphUtil.copyGraph(tile);
+			remainingNodes = LGraphUtil.graphOrder(current);
+			int loopsWithoutChanges = 0;
+			while (remainingNodes > 1 && loopsWithoutChanges < layoutTypes.length * NUM_CLOSENESS_LEVELS){
+				if (loopsWithoutChanges == 0)
+					debug(current.printGraph());
+				debug(	"Closeness limit: "+closenessLimit+
+						"; Remaining nodes: "+remainingNodes+
+						"; Loops without changes: "+loopsWithoutChanges);
+				LayoutType currentLayout = peekNextLayoutPattern(seqGen);
+				debug("Layout to try: "+currentLayout);
+				debug("Debug point: #"+debugPoint);
+				
+//				// DEBUG
+//				if (tile.getName().equals("Div_md_cns1_qotd_26") && variation[0] == LayoutType.GRID){
+//					out.print("");
+//				}
+<<<<<<< .mine
+				if (debugPoint == 206){
+					out.print("");
+				}
+=======
+				if (debugPoint == 10){
+					out.print("");
+				}
+>>>>>>> .r530
+				
+				++debugPoint;
+				LayoutPattern pattern = getNextLayoutPattern(seqGen);
+				pattern.setClosenessLimit(closenessLimit);
+				PatternMatcher matcher = new PatternMatcher();
+				List<List<LNode>> discarded = new ArrayList<List<LNode>>();
+				List<List<LNode>> matches = matcher.match(current, pattern, discarded);
+				if (!matches.isEmpty()){
+					debug("Matches: "+matches.size()+" "+matches.toString());
+					currentSolSeq.add(currentLayout);
+					for (List<LNode> m: matches){
+						mergeNodes(current, m, currentLayout);
+					}
+					loopsWithoutChanges = 0;
+					closenessLimit = MIN_CLOSENESS_LEVEL;
+				}else{
+					debug("No matches");
+					++loopsWithoutChanges;
+					if (loopsWithoutChanges > 0 && loopsWithoutChanges < layoutTypes.length * NUM_CLOSENESS_LEVELS
+							&& loopsWithoutChanges % NUM_CLOSENESS_LEVELS == 0)
+						closenessLimit = incClosenessLevel(closenessLimit);
+				}
+				if (!discarded.isEmpty()){
+					debug("Discarded: "+discarded.size()+" "+discarded.toString());
+				}
+				remainingNodes = LGraphUtil.graphOrder(current);
+			}
+			if (remainingNodes > 1){
+				debug("*** No solution ***");
+			}else{
+				debug("Solution: "+currentSolSeq);
+				if (!solutionSequences.contains(currentSolSeq)){
+					solutionSequences.add(currentSolSeq);
+					Layout layout = createLayout(current);
+					int fitness = LayoutEvaluator.fitness(layout);
+					layout.setFitness(fitness);
+					solutions.add(layout);
+					debug("*** NEW solution. Fitness: "+fitness + " *** \n");
+					
+					// If the solution consists of a unique layout
+					// Then there is no other better solution so we stop trying all the layout variations
+					if (currentSolSeq.size() == 1){
+						debug("*** Solution unique. Stop the search! ***");
+						break;
+					}
+				}else{
+					debug("Solution contained in a previous solution");
+				}
+			}
+		}
+		
+		// If there are no solutions, we create a CustomLayout
+		if (solutions.isEmpty()){
+			solutions.add(createUnknownLayout(tile));
+		}
+		
+		return solutions;
+	}
+	
+	
+	/*
+	 * Returns the next layout to apply of the sequence
+	 * without advancing the current position of the sequence
+	 */
+	private static LayoutType peekNextLayoutPattern(LayoutSequenceGenerator seq){
+		return seq.peek();
+	}
+	
+	/*
+	 * Returns the next layout to apply of the sequence
+	 */
+	private static LayoutPattern getNextLayoutPattern(LayoutSequenceGenerator seq){
+		LayoutType l = seq.next();
+		switch (l) {
+		case BORDER:
+			return new BorderLayoutPattern();
+		case GRID:
+			return new GridLayoutPattern();
+		case HORIZONTAL_FLOW:
+			return new HorizontalFlowLayoutPattern();
+		case VERTICAL_FLOW:
+			return new VerticalFlowLayoutPattern();
+		default:
+			throw new RuntimeException("The layout pattern does not exists");
+		}
+	}
+	
+	/*
+	 * Joins the nodes of the graphs. The semantics is the following:
+	 * - The group of N nodes is replaced by just 1 node
+	 * - The edges between a pair of nodes of the group are removed
+	 * - The edges that go from an external node to a node of the group are maintained depending
+	 * on the values of the Allen intervals
+	 * - (11/02/13) The alignment of the tiles is copied (all the tiles of the group should have the same alignment)
+	 * 
+	 */
+	private static void mergeNodes(LNode graph, List<LNode> nodes, LayoutType layoutType){
+		LNode newNode = new LNode();
+		String newName = "";
+		
+		// First, change all the incoming edges of the nodes of the group so they
+		// are incoming edges of the newNode
+		// We do the same with the outgoing edges
+		// Then, we put all the matched nodes inside the brand new node
+		for (LNode n: nodes){
+			if (!newName.equals(""))
+				newName += INFIX;
+			newName += n.getName();
+			List<LEdge> incomingCopy = LGraphUtil.copyList(n.getIncoming());
+			for (LEdge e: incomingCopy){
+				// Source: external node, Target: internal node
+				if (!nodes.contains(e.getSource())){
+					e.setTarget(newNode);
+				}
+				// Source: internal node, Target: internal node
+				else{
+					newNode.addEdge(e);
+				}
+			}
+			List<LEdge> outgoingCopy = LGraphUtil.copyList(n.getOutgoing());
+			for (LEdge e: outgoingCopy){
+				// Source: internal node, Target: external node
+				if (!nodes.contains(e.getTarget())){
+					e.setSource(newNode);
+				}
+			}
+			newNode.addNode(n);
+		}
+		newNode.setName(newName);
+		newNode.setLayoutType(layoutType);
+		// For the time bein we get the alignment of the first node
+		newNode.setHalignment(nodes.get(0).getHalignment());
+		newNode.setValignment(nodes.get(0).getValignment());
+		graph.addNode(newNode);
+		
+		// Then we remove all the incoming and outgoing edges of the new node that are not needed
+		// and we replace some edges by other that are more suitable
+		// If there are several nodes that stem from/lead to the same source/target node, 
+		// then replace these edges by just one of the suitable type
+		// In the end we have to satisfy the constraint that there is only 
+		// a directed edge between every pair of nodes
+		// Table(sourceNode, targetNode) -> edgeList
+		Table<LNode,LNode,List<LEdge>> table = HashBasedTable.create();
+		for (LEdge r: newNode.getIncoming()){
+			LNode src = r.getSource();
+			if (!table.contains(src, newNode))
+				table.put(src, newNode, new ArrayList<LEdge>());
+			List<LEdge> list = table.get(src, newNode);
+			list.add(r);
+		}
+		for (LEdge r: newNode.getOutgoing()){
+			LNode trg = r.getTarget();
+			if (!table.contains(newNode, trg))
+				table.put(newNode, trg, new ArrayList<LEdge>());
+			List<LEdge> list = table.get(newNode, trg);
+			list.add(r);
+		}
+		removeMultipleEdge(table, graph);
+		
+		// When all the nodes of the graph have been joined according to some layout, it results
+		// in a graph containing one node. In that case, we move the contents of the only child
+		// to the parent (the graph node)
+//		if (graph.getNodes().size() == 1){
+//			LNode mainNode = graph.getNodes().get(0);
+//			for (LNode n: mainNode.getNodes())
+//				graph.addNode(n);
+//			for (LEdge e: mainNode.getEdges())
+//				graph.addEdge(e);
+//			graph.
+//		}
+	}
+	
+	/*
+	 * This method is used to remove multiple edges that are between a pair of nodes,
+	 * so in the end we only have one edge between both nodes
+	 * The attributes of the (new) edge are modified to be coherent with the attributes of the old edges
+	 * @param The table being: (sourceNode, targetNode) -> edgeList
+	 */
+	private static void removeMultipleEdge(Table<LNode, LNode, List<LEdge>> table, LNode container){
+		// Then we check those nodes for which there is more than 1 outgoing edge
+		Iterator<Cell<LNode,LNode,List<LEdge>>> iter = table.cellSet().iterator();
+		while (iter.hasNext()){
+			Cell<LNode,LNode,List<LEdge>> cell = iter.next();
+			LNode srcNode = cell.getRowKey();
+			LNode trgNode = cell.getColumnKey();
+			List<LEdge> edgeList = cell.getValue();
+			if (edgeList.size() > 1){
+				// Create the new edge
+				LEdge newIncomingEdge = getReplacementRelation(edgeList);
+				newIncomingEdge.setSource(srcNode);
+				newIncomingEdge.setTarget(trgNode);
+				container.addEdge(newIncomingEdge);
+				// Remove the superfluous edges
+				for (LEdge r: edgeList)
+					r.remove();
+			}
+		}
+	}
+	
+	/*
+	 * Returns a new edge that can replace the set of edges represented by the argument
+	 * Pre: the size of the list is greater than 1
+	 */
+	private static LEdge getReplacementRelation(List<LEdge> list){
+		LEdge newEdge = new LEdge();
+		String newName = list.get(0).getName();
+		newEdge.setJoined(list.get(0).isJoined());
+		newEdge.setXInterval(list.get(0).getXInterval());
+		newEdge.setYInterval(list.get(0).getYInterval());
+		newEdge.setCloseness(list.get(0).getCloseness());
+		for (int i=1; i<list.size(); ++i){
+			newName += INFIX + list.get(i).getName();
+			if (list.get(i).getXInterval() != newEdge.getXInterval())
+				newEdge.setXInterval(AllenUtil.joinIntervals(newEdge.getXInterval(), list.get(i).getXInterval()));
+			if (list.get(i).getYInterval() != newEdge.getYInterval())
+				newEdge.setYInterval(AllenUtil.joinIntervals(newEdge.getYInterval(), list.get(i).getYInterval()));
+			if (list.get(i).getCloseness() == ClosenessType.VERY_CLOSE || newEdge.getCloseness() == ClosenessType.VERY_CLOSE)
+				newEdge.setCloseness(ClosenessType.VERY_CLOSE);
+			else if (list.get(i).getCloseness() == ClosenessType.CLOSE || newEdge.getCloseness() == ClosenessType.CLOSE)
+				newEdge.setCloseness(ClosenessType.CLOSE);
+			else if (list.get(i).getCloseness() == ClosenessType.FAR || newEdge.getCloseness() == ClosenessType.FAR)
+				newEdge.setCloseness(ClosenessType.FAR);
+		}
+		newEdge.setName(newName);
+		
+		return newEdge;
+	}
+	
+	
+	
+	/*
+	 * Creates a special layout to mean that the layout could not be detected
+	 */
+	private static Layout createUnknownLayout(Tile tile){
+		// We create a CustomLayout
+		CustomLayout custom = factory.createCustomLayout();
+		custom.setName(tile.getName()+LAYOUT_SUFFIX);
+		custom.setHAlignment(HAlignmentType.NONE);
+		custom.setVAlignment(VAlignmentType.NONE);
+		registerMapping(tile, custom);
+		for (Tile t: tile.getSubtiles()){
+			ElementNode enode = factory.createElementNode();
+			enode.setName(t.getName());
+			enode.setHAlignment(HAlignmentType.NONE);
+			enode.setVAlignment(VAlignmentType.NONE);
+			custom.getSublayouts().add(enode);
+			registerMapping(t, enode);
+		}
+		
+		return custom;
+	}
+	
+	/*
+	 * Creates a new layout tree of a multi-level graph
+	 */
+	private static Layout createLayout(LNode graph){
+		// Inside the original graph, there must be only one node, which is the result of
+		// joining the original set of nodes
+		if (graph.getNodes().size() != 1)
+			throw new RuntimeException("The graph should contain just 1 node after joining all the children nodes");
+		
+		// Get the coordinates of the region
+		Tile t = graph.getTiles().get(0);
+		Rectangle parentRect = new Rectangle(
+				t.getXMinPos(), t.getYMinPos(), 
+				t.getXMaxPos() - t.getXMinPos() + 1,
+				t.getYMaxPos() - t.getYMinPos() + 1);
+		
+		LNode mainNode = graph.getNodes().get(0);
+		if (graph.getTiles().size() != 1)
+			throw new RuntimeException("The graph "+graph.getName()+" should reference only one tile");
+		mainNode.removeTiles();
+		mainNode.addTile(graph.getTiles().get(0));
+		Layout layout = createLayout(mainNode, null, parentRect);
+		//layout.setName(graph.getTile().getName()+LAYOUT_SUFFIX);
+		
+		
+//		if (graph.getParent() != null){
+//			List<Layout> parentLayouts = getMapping(graph.getParent().getTile());
+//			if (parentLayouts != null){
+//				for (Layout parent: parentLayouts)
+//					parent.getSublayouts().add(layout);
+//			}
+//		}
+		return layout;
+	}
+	
+	/*
+	 * Creates a new layout tree of a multi-level graph recursively
+	 */
+	private static Layout createLayout(LNode graph, Layout parentLayout, Rectangle regionArea){
+		Rectangle nodeArea = getArea(graph);
+		//System.out.println("> Area Node: "+nodeArea.toString()+"; Parent area: "+regionArea);
+		Layout layout;
+		if (graph.getNodes().isEmpty()){
+			layout = factory.createElementNode();
+			setAlignment(layout, parentLayout, graph, nodeArea, regionArea);
+		}else{
+			switch (graph.getLayoutType()) {
+			case BORDER:
+				layout = factory.createBorderLayout();
+				break;
+			case GRID:
+				layout = factory.createGridLayout();
+				int numCols = getNumCols(graph);
+				((GridLayout)layout).setNumCols(numCols);
+				break;
+			case HORIZONTAL_FLOW:
+				layout = factory.createFlowLayout();
+				((FlowLayout)layout).setType(FlowLayoutType.HORIZONTAL);
+				break;
+			case VERTICAL_FLOW:
+				layout = factory.createFlowLayout();
+				((FlowLayout)layout).setType(FlowLayoutType.VERTICAL);
+				break;
+			default:
+				throw new RuntimeException("The layout type does not exists");
+			}
+			setAlignment(layout, parentLayout, graph, nodeArea, regionArea);
+			for (LNode n: graph.getNodes()){
+				createLayout(n, layout, regionArea);
+			}
+		}
+		
+		if (parentLayout != null)
+			parentLayout.getSublayouts().add(layout);
+		if (graph.getTiles().size() == 1){
+			Tile t = graph.getTiles().get(0);
+			registerMapping(t, layout);
+			layout.setName(t.getName()+LAYOUT_SUFFIX);
+		}else
+			layout.setName(graph.getName()+LAYOUT_SUFFIX);
+		return layout;
+	}
+	
+	/*
+	 * Returns the number of columns of a graph with a grid layout
+	 * 
+	 * Pre: the graph represents a grid layout
+	 * Pre: the first node is the upper-left node of the grid
+	 */
+	private static int getNumCols(LNode graph){
+		LNode current = graph.getNodes().get(0);
+		int cols = 1;
+		do{
+			List<LNode> nodes = LGraphUtil.getRightNodes(current);
+			if (nodes.size() == 1 && graph.getNodes().contains(nodes.get(0))){
+				current = nodes.get(0);
+				++cols;	
+			}else
+				current = null;
+		}while (current != null);
+		return cols;
+	}
+	
+	/*
+	 * Adds a layout to a mapping
+	 */
+	private static void registerMapping(Tile tile, Layout layout){
+		List<Layout> list;
+		if (mappings.containsKey(tile))
+			list = mappings.get(tile);
+		else{
+			list = new ArrayList<Layout>();
+			mappings.put(tile, list);
+		}
+		list.add(layout);
+	}
+	
+	/*
+	 * Returns a stored mapping
+	 */
+	private static List<Layout> getMapping(Tile tile){
+		if (mappings.containsKey(tile))
+			return mappings.get(tile);
+		else{
+			try{
+				closeFile();
+			}catch(IOException e){
+				System.err.println(e.getMessage());
+			}
+			throw new RuntimeException("Tile not found in mapping: "+tile.getName());
+			//return null;
+		}
+	}
+	
+	
+	/*
+	 * Returns the next higher closeness level
+	 */
+	public static ClosenessType incClosenessLevel(ClosenessType c){
+		if (c == ClosenessType.VERY_CLOSE)
+			return ClosenessType.CLOSE;
+		else if (c == ClosenessType.CLOSE)
+			return ClosenessType.FAR;
+		else if (c == ClosenessType.FAR)
+			return ClosenessType.VERY_FAR;
+		else
+			throw new RuntimeException("Closeness level at the top");
+	}
+	
+	
+	/****************************************/
+
+	
+	/*
+	 * Enables the debug mode
+	 */
+	public static void setDebug(boolean d){
+		debug = d;
+	}
+	
+	/*
+	 * Changes the debug output to the chosen file
+	 */
+	public static void setDebugFile(String filename) throws IOException{
+		writer = new FileWriter(filename);
+		pwriter = new PrintWriter(writer);
+		debug = true;
+	}
+	
+	/*
+	 * Closes an open debug file
+	 */
+	public static void closeFile() throws IOException{
+		pwriter.close();
+		writer.close();
+	}
+
+	/*
+	 * Prints in console if debug mode is enabled
+	 */
+	private static void debug(String str){
+		if (debug){
+			out.println(str);
+			if (pwriter != null)
+				pwriter.println(str);
+		}
+	}
+	
+	/*
+	 * Prints in console if debug mode is enabled
+	 * In this case it prints an string followed by a list
+	 */
+	private static void debug(String str, Object array[]){
+		if (debug){
+			out.print(str);
+			for (Object o: array)
+				out.print(o.toString()+" ");
+			out.println();
+			if (pwriter != null){
+				pwriter.print(str);
+				for (Object o: array)
+					pwriter.print(o.toString()+" ");
+				pwriter.println();
+			}
+		}
+	}
+	
+	/*
+	 * Gets the area occuppied by a node representing a part of the UI
+	 */
+	private static Rectangle getArea(LNode node){
+		// Get the widgets
+		ArrayList<ComposableWidget> list = new ArrayList<ComposableWidget>();
+		getAllWidgets(node, list);
+		
+		// Get the maximum area
+		int xmin = Integer.MAX_VALUE;
+		int ymin = Integer.MAX_VALUE;
+		int xmax = Integer.MIN_VALUE;
+		int ymax = Integer.MIN_VALUE;
+		for (ComposableWidget w: list){
+			xmin = Math.min(xmin, w.getXmin());
+			ymin = Math.min(ymin, w.getYmin());
+			xmax = Math.max(xmax, w.getXmax());
+			ymax = Math.max(ymax, w.getYmax());
+		}
+		Rectangle r = new Rectangle(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1);
+		return r;
+	}
+	
+	/*
+	 * Gets all the widgets for the given node recursively
+	 * The result is stored in the result array (must have been initialised before)
+	 */
+	private static void getAllWidgets(LNode node, List<ComposableWidget> result){
+		if (node.getNodes().isEmpty()){
+			Tile t = node.getTiles().get(0);
+			if (t.getElement() instanceof ComposableWidget)
+				result.add((ComposableWidget)t.getElement());
+		}else{
+			for (LNode n: node.getNodes())
+				getAllWidgets(n, result);
+		}
+	}
+	
+	/*
+	 * Sets the horizontal and vertical alignment for the layout
+	 */
+	private static void setAlignment(Layout layout, Layout parentLayout, LNode node,
+			Rectangle thisArea, Rectangle container){
+		// Horizontal alignment
+		if (parentLayout instanceof FlowLayout && 
+				((FlowLayout)parentLayout).getType() == FlowLayoutType.VERTICAL){
+			int hMargin = Math.round(container.width * hAlignmentMargin);
+			boolean left = 	container.getMinX() <= thisArea.getMinX() && 
+					container.getMinX() + hMargin >= thisArea.getMinX();
+			boolean right = container.getMaxX() >= thisArea.getMaxX() &&
+					container.getMaxX() - hMargin <= thisArea.getMaxX();
+			if (left)
+				if (right)
+					layout.setHAlignment(HAlignmentType.BOTH);
+				else
+					layout.setHAlignment(HAlignmentType.LEFT);
+			else 
+				if (right)
+					layout.setHAlignment(HAlignmentType.RIGHT);
+				else
+					layout.setHAlignment(HAlignmentType.CENTER);
+		}
+		
+		// Vertical alignment
+		if (parentLayout instanceof FlowLayout && 
+				((FlowLayout)parentLayout).getType() == FlowLayoutType.HORIZONTAL){
+			int vMargin = Math.round(container.height * vAlignmentMargin);
+			boolean top = 	container.getMinY() <= thisArea.getMinY() && 
+					container.getMinY() + vMargin >= thisArea.getMinY();
+			boolean bottom = container.getMaxY() >= thisArea.getMaxY() &&
+					container.getMaxY() - vMargin <= thisArea.getMaxY();
+			if (top)
+				if (bottom)
+					layout.setVAlignment(VAlignmentType.BOTH);
+				else
+					layout.setVAlignment(VAlignmentType.TOP);
+			else 
+				if (bottom)
+					layout.setVAlignment(VAlignmentType.BOTTOM);
+				else
+					layout.setVAlignment(VAlignmentType.MIDDLE);
+		}
+		
+		// Border layout alignment
+		if (parentLayout instanceof BorderLayout){
+			switch (node.getHalignment()){
+				case LEFT:
+					layout.setHAlignment(guizmo.layout.HAlignmentType.LEFT);
+					break;
+				case RIGHT:
+					layout.setHAlignment(guizmo.layout.HAlignmentType.RIGHT);
+					break;
+				case CENTER:
+					layout.setHAlignment(guizmo.layout.HAlignmentType.CENTER);
+					break;
+			}
+			switch (node.getValignment()){
+				case TOP:
+					layout.setVAlignment(guizmo.layout.VAlignmentType.TOP);
+					break;
+				case BOTTOM:
+					layout.setVAlignment(guizmo.layout.VAlignmentType.BOTTOM);
+					break;
+				case MIDDLE:
+					layout.setVAlignment(guizmo.layout.VAlignmentType.MIDDLE);
+					break;
+			}	
+		}
+	}
+}

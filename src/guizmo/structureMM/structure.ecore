@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="structure" nsURI="http://www.modelum.es/guizmo/structure" nsPrefix="struc">
+  <eClassifiers xsi:type="ecore:EClass" name="StructureRoot">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="views" upperBound="-1"
+        eType="#//GraphicalView" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resourceRepository" eType="#//ResourceRepository"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ResourceRepository">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
+        eType="#//Resource" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Resource" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ImageResource" eSuperTypes="#//Resource #//Locatable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="I18NResource" eSuperTypes="#//Resource">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="language" lowerBound="1"
+        eType="#//LanguageType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="translations" upperBound="-1"
+        eType="#//TextTranslation" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TextTranslation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="LanguageType">
+    <eLiterals name="EN"/>
+    <eLiterals name="ES" value="1"/>
+    <eLiterals name="FR" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GraphicalElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="briefDescription" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isVisible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEnabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isResizable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Locatable" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="xmin" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ymin" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="xmax" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ymax" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Container" abstract="true" eSuperTypes="#//GraphicalElement #//Locatable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="widgets" upperBound="-1"
+        eType="#//ComposableWidget" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GraphicalView" eSuperTypes="#//Container">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="title" eType="#//Text"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Widget" abstract="true" eSuperTypes="#//GraphicalElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Menu" abstract="true" eSuperTypes="#//Widget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Toolbar" abstract="true" eSuperTypes="#//Widget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ComposableWidget" abstract="true" eSuperTypes="#//Widget #//Locatable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GUIRegion" eSuperTypes="#//Container #//ComposableWidget">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="border" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SingleWidget" abstract="true" eSuperTypes="#//ComposableWidget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="GraphicalResource" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resource" eType="#//Resource"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Text" eSuperTypes="#//GraphicalResource"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Image" eSuperTypes="#//GraphicalResource"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Linkable" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="isHyperlink" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="uri" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="OutputText" eSuperTypes="#//SingleWidget #//Linkable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="text" lowerBound="1" eType="#//Text"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TextBox" eSuperTypes="#//SingleWidget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="text" eType="#//Text" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TextArea" eSuperTypes="#//SingleWidget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="text" eType="#//Text" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="numRows" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Itemizable" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="items" upperBound="-1"
+        eType="#//Item" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//GraphicalElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resource" eType="#//GraphicalResource"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ComboBox" eSuperTypes="#//SingleWidget #//Itemizable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CheckBox" eSuperTypes="#//SingleWidget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resource" eType="#//GraphicalResource"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="selected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RadioGroup" eSuperTypes="#//SingleWidget #//Itemizable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="multipleSelection" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="selected" upperBound="-1"
+        eType="#//Item"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ListBox" eSuperTypes="#//SingleWidget #//Itemizable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="multipleSelection" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ImageContainer" eSuperTypes="#//SingleWidget #//Linkable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="image" lowerBound="1" eType="#//Image"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VideoContainer" eSuperTypes="#//SingleWidget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Button" eSuperTypes="#//SingleWidget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="graphic" eType="#//GraphicalResource"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ObjectWidget" eSuperTypes="#//SingleWidget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Table" eSuperTypes="#//SingleWidget">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="headers" upperBound="-1"
+        eType="#//GraphicalResource" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="types" upperBound="-1"
+        eType="#//SingleWidget" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rows" upperBound="-1" eType="#//TableRow"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TableRow">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="values" upperBound="-1"
+        eType="#//GraphicalResource" containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>

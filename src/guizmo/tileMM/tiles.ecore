@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="tiles" nsURI="http://www.modelum.es/guizmo/tiles" nsPrefix="tiles">
+  <eClassifiers xsi:type="ecore:EClass" name="NamedElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LowLayoutRoot">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="viewTiles" upperBound="-1"
+        eType="#//Tile" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AlignedElement" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="verticalAlignment" lowerBound="1"
+        eType="#//VAlignmentType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontalAlignment" lowerBound="1"
+        eType="#//HAlignmentType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Tile" abstract="true" eSuperTypes="#//NamedElement #//AlignedElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outgoing" upperBound="-1"
+        eType="#//Relation" eOpposite="#//Relation/source"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="incoming" upperBound="-1"
+        eType="#//Relation" eOpposite="#//Relation/target"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="up" upperBound="-1" eType="#//Tile"
+        eOpposite="#//Tile/down"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="down" upperBound="-1" eType="#//Tile"
+        eOpposite="#//Tile/up"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left" upperBound="-1" eType="#//Tile"
+        eOpposite="#//Tile/right"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right" upperBound="-1"
+        eType="#//Tile" eOpposite="#//Tile/left"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="element" lowerBound="1"
+        eType="ecore:EClass ../../../../guizmo.structureMM/bin/guizmo/structureMM/structure.ecore#//GraphicalElement"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="xMinPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="xMaxPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="yMinPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="yMaxPos" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
+      <eAnnotations source="http://www.modelum.es/guizmo">
+        <details key="comment" value="Represents a percentage of the horizontal space that takes up. Values are normalized between [0,1], so a 0.6 represents a 60%."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="vSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat">
+      <eAnnotations source="http://www.modelum.es/guizmo">
+        <details key="comment" value="Represents a percentage of the vertical space that takes up. Values are normalized between [0,1], so a 0.6 represents a 60%."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="associationKind" eType="#//AssociationKind"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="tileType" eType="#//TileType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subtiles" upperBound="-1"
+        eType="#//Tile" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="relations" upperBound="-1"
+        eType="#//Relation" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="leftMargin" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rightMargin" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="topMargin" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="bottomMargin" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloat"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SimpleTile" eSuperTypes="#//Tile"/>
+  <eClassifiers xsi:type="ecore:EClass" name="OverlappingTile" eSuperTypes="#//Tile"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LineTile" eSuperTypes="#//Tile">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="orientation" eType="#//OrientationType"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="HoleTile" eSuperTypes="#//Tile"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Relation">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+        eType="#//Tile" eOpposite="#//Tile/outgoing"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="#//Tile" eOpposite="#//Tile/incoming"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="xInterval" lowerBound="1"
+        eType="#//AllenIntervalType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="yInterval" lowerBound="1"
+        eType="#//AllenIntervalType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="closeness" lowerBound="1"
+        eType="#//ClosenessType"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="joined" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="AssociationKind">
+    <eLiterals name="NONE"/>
+    <eLiterals name="MAP" value="1"/>
+    <eLiterals name="EXTRA" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="TileType">
+    <eLiterals name="COARSE"/>
+    <eLiterals name="FINE" value="1"/>
+    <eLiterals name="ITEM" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="VAlignmentType">
+    <eLiterals name="NONE"/>
+    <eLiterals name="TOP" value="1"/>
+    <eLiterals name="MIDDLE" value="2"/>
+    <eLiterals name="BOTTOM" value="3"/>
+    <eLiterals name="BOTH" value="4"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="HAlignmentType">
+    <eLiterals name="NONE"/>
+    <eLiterals name="LEFT" value="1"/>
+    <eLiterals name="CENTER" value="2"/>
+    <eLiterals name="RIGHT" value="3"/>
+    <eLiterals name="BOTH" value="4"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="OrientationType">
+    <eLiterals name="HORIZONTAL"/>
+    <eLiterals name="VERTICAL" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="AllenIntervalType">
+    <eLiterals name="BEFORE"/>
+    <eLiterals name="AFTER" value="1"/>
+    <eLiterals name="MEETS" value="2"/>
+    <eLiterals name="MET_BY" value="3"/>
+    <eLiterals name="STARTS" value="4"/>
+    <eLiterals name="STARTED_BY" value="5"/>
+    <eLiterals name="FINISHES" value="6"/>
+    <eLiterals name="FINISHED_BY" value="7"/>
+    <eLiterals name="DURING" value="8"/>
+    <eLiterals name="CONTAINS" value="9"/>
+    <eLiterals name="OVERLAPS" value="10"/>
+    <eLiterals name="OVERLAPPED_BY" value="11"/>
+    <eLiterals name="EQUAL" value="12"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ClosenessType">
+    <eLiterals name="VERY_CLOSE"/>
+    <eLiterals name="CLOSE" value="1"/>
+    <eLiterals name="FAR" value="2"/>
+    <eLiterals name="VERY_FAR" value="3"/>
+  </eClassifiers>
+</ecore:EPackage>
