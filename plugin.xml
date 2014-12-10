@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            id="lasser.ui.layoutModel"
+            nameFilter="*.screen"
+            objectClass="org.eclipse.core.resources.IFile">
+         <action
+               class="lasser.ui.popup.actions.GenLayoutModelAction"
+               enablesFor="1"
+               icon="icons/layout16.png"
+               id="lasser.ui.genLayoutModelAction"
+               label="Generate Java Swing code">
+         </action>
+      </objectContribution>
+   </extension>
+
+<!--
+   <extension point="org.eclipse.ui.commands">
+   		<category id="org.eclipse.ui.views.problems"
+            name="%ProblemView.category.name">
+    	</category>
+   		<command categoryId="org.eclipse.ui.views.problems"
+            defaultHandler="lasser.ui.popup.actions.NewAction"
+            description="%ProblemView.Sorting.description"
+            id="org.eclipse.ui.views.problems.sorting"
+            name="%ProblemView.Sorting.name">
+       	</command>
+	</extension>      
+-->
+
+ <!--
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            objectClass="org.eclipse.core.resources.IFile"
+            id="lasser.ui.contribution1">
+         <menu
+               label="New Submenu"
+               path="additions"
+               id="lasser.ui.menu1">
+            <separator
+                  name="group1">
+            </separator>
+         </menu>
+         <action
+               label="New Action"
+               class="lasser.ui.popup.actions.NewAction"
+               menubarPath="lasser.ui.menu1/group1"
+               enablesFor="1"
+               id="lasser.ui.newAction">
+         </action>
+      </objectContribution>
+   </extension>
+ -->
+
+</plugin>

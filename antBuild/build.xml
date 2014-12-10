@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="lasser.oneplugin" default="setProject">
+
+	<property name="baseDir" value=".." />
+	<property name="rootDir" value="../${baseDir}" />
+	<property name="srcDir" value="${baseDir}/src" />
+	<property name="projectList" value="lasser.ui,lasser.facade,lasser.sketchMM,lasser.wireframe2sketch,guizmo.structureMM,lasser.sketch2structure,guizmo.tileMM,guizmo.structure2tiles,guizmo.layoutMM,guizmo.tiles2layout,guizmo.swingGenerator" />
+	
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties"/> 
+	
+	<target name="setProject">
+		<delete includeemptydirs="true">
+			<fileset dir="${srcDir}" includes="**/*"/>
+		</delete>
+		<foreach list="${projectList}" target="copySrcPackages"
+		     param="project" inheritall="true"/>
+	</target>
+	
+	<target name="copySrcPackages">
+		<copy todir="${srcDir}" overwrite="true">
+			 <fileset dir="${rootDir}/${project}/src" includes="**"/>
+		</copy>
+	</target>
+
+
+</project>
